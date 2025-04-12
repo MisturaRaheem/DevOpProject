@@ -1,0 +1,62 @@
+trigger:
+  - main
+
+pool:
+  vmImage: windows
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        steps:
+          - checkout: self
+          - script: npm install
+          - script: npm run build
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: 'build'
+              artifactName: 'app'
+
+  - stage: Test
+    jobs:
+      - job: Test
+        steps:
+          - script: npm test -- --coverage
+
+  - stage: SonarQube
+    jobs:
+      - job: CodeAnalysis
+        steps:
+          - task: SonarQubePrepare@5
+          - task: SonarQubeAnalyze@5
+          - task: SonarQubePublish@5
+
+  - stage: Deliver
+    jobs:
+      - job: Deliver
+        steps:
+          - script: echo "Delivering artifact..."
+
+  - stage: DeployDev
+    jobs:
+      - job: DeployDev
+        steps:
+          - script: echo "Deploying to Dev Env on port 5000"
+
+  - stage: DeployQAT
+    jobs:
+      - job: DeployQAT
+        steps:
+          - script: echo "Mock Deploy to QAT"
+
+  - stage: DeployStaging
+    jobs:
+      - job: DeployStaging
+        steps:
+          - script: echo "Mock Deploy to Staging"
+
+  - stage: DeployProduction
+    jobs:
+      - job: DeployProduction
+        steps:
+          - script: echo "Mock Deploy to Production"
