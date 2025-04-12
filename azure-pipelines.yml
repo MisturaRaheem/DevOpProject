@@ -22,11 +22,11 @@ stages:
             displayName: 'Install Node.js'
           - script: |
               npm install
-              npm run build
+              npm run build  # This generates the build/ folder
             displayName: 'Install dependencies & build app'
           - task: PublishBuildArtifacts@1
             inputs:
-              pathToPublish: 'build'
+              pathToPublish: 'build'  # Ensure this folder exists after build
               artifactName: 'react-app'
             displayName: 'Publish Frontend Build'
 
