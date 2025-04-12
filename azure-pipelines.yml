@@ -20,12 +20,17 @@ stages:
 
           - script: |
               npm install
-              npm run build
             workingDirectory: graphql-client
-            displayName: 'Build React App (Vite)'
+            displayName: 'Install frontend dependencies'
 
           - script: |
-              dir graphql-client\dist
+              npm run build
+            workingDirectory: graphql-client
+            displayName: 'Run Vite build'
+
+          - script: |
+              dir dist
+            workingDirectory: graphql-client
             displayName: 'Verify dist folder exists'
 
           - task: PublishBuildArtifacts@1
