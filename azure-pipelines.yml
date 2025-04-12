@@ -19,10 +19,14 @@ stages:
             displayName: 'Install Node.js'
 
           - script: |
-              cd graphql-client
               npm install
               npm run build
+            workingDirectory: graphql-client
             displayName: 'Build React App (Vite)'
+
+          - script: |
+              dir graphql-client\dist
+            displayName: 'Verify dist folder exists'
 
           - task: PublishBuildArtifacts@1
             inputs:
@@ -45,8 +49,8 @@ stages:
             displayName: 'Install Node.js'
 
           - script: |
-              cd graphql-server
               npm install
+            workingDirectory: graphql-server
             displayName: 'Install GraphQL Server dependencies'
 
           - task: PublishBuildArtifacts@1
