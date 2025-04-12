@@ -1,61 +1,96 @@
 trigger:
   - main
 
+# Use your self-hosted agent pool
 pool:
   name: COMP367
 
+variables:
+  buildConfiguration: 'Release'
+
 stages:
-  # Stage 1: Build Frontend
-  - stage: BuildFrontend
-    displayName: 'Build React Frontend'
+  # Stage 1: Build
+  - stage: Build
+    displayName: 'Build Application'
     jobs:
-      - job: BuildReact
-        displayName: 'Build React App'
+      - job: Build
         steps:
           - checkout: self
-
           - task: NodeTool@0
             inputs:
               versionSpec: '18.x'
             displayName: 'Install Node.js'
-
           - script: |
-              cd frontend
               npm install
-              npm run build
-              dir build
-            displayName: 'Install dependencies and build frontend'
-
+              npm run build  # This generates the build/ folder
+            displayName: 'Install dependencies & build app'
           - task: PublishBuildArtifacts@1
             inputs:
-              pathToPublish: 'frontend/build'
+              pathToPublish: 'build'  # Ensure this folder exists after build
               artifactName: 'react-app'
-              publishLocation: 'Container'
             displayName: 'Publish Frontend Build'
 
-  # Stage 2: Package Backend
-  - stage: BuildBackend
-    displayName: 'Package Node.js GraphQL Backend'
+  # Stage 2: Test
+  - stage: Test
+    displayName: 'Run Tests'
     jobs:
-      - job: PackageBackend
-        displayName: 'Prepare GraphQL Server'
+      - job: Test
         steps:
-          - checkout: self
-
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Install Node.js'
-
           - script: |
-              cd backend
               npm install
-              echo "Backend dependencies installed."
-            displayName: 'Install backend dependencies'
+              npm test -- --coverage
+            displayName: 'Run unit tests with coverage'
 
-          - task: PublishBuildArtifacts@1
-            inputs:
-              pathToPublish: 'backend'
-              artifactName: 'graphql-server'
-              publishLocation: 'Container'
-            displayName: 'Publish Backend Code'
+  # Stage 3: SonarQube (Optional Integration)
+  - stage: SonarQube
+    displayName: 'Code Analysis'
+    condition: succeeded()
+    jobs:
+      - job: Sonar
+        steps:
+          - script: echo "Skipping SonarQube until configured"
+
+  # Stage 4: Deliver
+  - stage: Deliver
+    displayName: 'Deliver Artifact'
+    jobs:
+      - job: Deliver
+        steps:
+          - script: echo "Delivering artifact to release pipeline..."
+            displayName: 'Mock deliver step'
+
+  # Stage 5: Deploy to Dev
+  - stage: DeployDev
+    displayName: 'Deploy to Dev Environment'
+    jobs:
+      - job: Dev
+        steps:
+          - script: echo "Deploying app to Dev environment on port 5000"
+            displayName: 'Mock Dev Deployment'
+
+  # Stage 6: Deploy to QAT
+  - stage: DeployQAT
+    displayName: 'Deploy to QAT Environment'
+    jobs:
+      - job: QAT
+        steps:
+          - script: echo "Deploying to QAT environment"
+            displayName: 'Mock QAT Deployment'
+
+  # Stage 7: Deploy to Staging
+  - stage: DeployStaging
+    displayName: 'Deploy to Staging Environment'
+    jobs:
+      - job: Staging
+        steps:
+          - script: echo "Deploying to Staging environment"
+            displayName: 'Mock Staging Deployment'
+
+  # Stage 8: Deploy to Production
+  - stage: DeployProduction
+    displayName: 'Deploy to Production Environment'
+    jobs:
+      - job: Production
+        steps:
+          - script: echo "Deploying to Production environment"
+            displayName: 'Mock Production Deployment'
