@@ -79,7 +79,7 @@ stages:
             versionSpec: '18.x'
 
         - script: |
-            echo "✅ Running mock unit tests"
+            echo " Running mock unit tests"
             echo "Mock test: All tests passed!" > test.txt
             cat test.txt
           workingDirectory: graphql-server
@@ -94,7 +94,7 @@ stages:
   jobs:
     - job: Sonar
       steps:
-        - script: echo "🛈 SonarQube analysis skipped (mock only)"
+        - script: echo "SonarQube analysis skipped (mock only)"
           displayName: 'Mock SonarQube Step'
 
 # ------------------------------------------------
@@ -116,7 +116,7 @@ stages:
   jobs:
     - job: Dev
       steps:
-        - script: echo "✅ Deploying to Dev on port 5000"
+        - script: echo " Deploying to Dev on port 5000"
           displayName: 'Dev Deployment Step'
 
 # ------------------------------------------------
@@ -127,7 +127,7 @@ stages:
   jobs:
     - job: QAT
       steps:
-        - script: echo "✅ Deploying to QAT Environment"
+        - script: echo "Deploying to QAT Environment"
           displayName: 'QAT Deployment Step'
 
 # ------------------------------------------------
@@ -138,7 +138,7 @@ stages:
   jobs:
     - job: Staging
       steps:
-        - script: echo "✅ Deploying to Staging Environment"
+        - script: echo "Deploying to Staging Environment"
           displayName: 'Staging Deployment Step'
 
 # ------------------------------------------------
@@ -149,5 +149,5 @@ stages:
   jobs:
     - job: Production
       steps:
-        - script: echo "✅ Deploying to Production Environment"
+        - script: echo "Deploying to Production Environment"
           displayName: 'Production Deployment Step'
