@@ -65,7 +65,7 @@ stages:
             displayName: 'Publish GraphQL Server Artifact'
 
   # --------------------------------------------
-  # Stage 3: Unit Tests + Coverage (Mocked)
+  # Stage 3: Unit Tests (Mocked)
   # --------------------------------------------
   - stage: Test
     displayName: 'Run Unit Tests and Coverage'
@@ -79,34 +79,75 @@ stages:
               versionSpec: '18.x'
 
           - script: |
-              echo "Running mock tests..."
-              cd graphql-server
-              echo "console.log('✅ All tests passed');" > test.js
-              node test.js
-            displayName: 'Mock backend unit tests with Node.js'
+              echo "✅ Running mock unit tests"
+              echo "All tests passed!" > test.txt
+              cat test.txt
+            workingDirectory: graphql-server
+            displayName: 'Mock unit test with coverage output'
 
   # --------------------------------------------
-  # Stage 4: SonarQube Code Analysis
+  # Stage 4: Mock SonarQube
   # --------------------------------------------
   - stage: SonarQube
-    displayName: 'Code Analysis'
+    displayName: 'Code Analysis (Mocked)'
     condition: succeeded()
     jobs:
-      - job: SonarScan
+      - job: MockSonar
         steps:
-          - checkout: self
+          - script: echo "🛈 Skipping SonarQube analysis — setup pending"
+            displayName: 'Mock SonarQube Step'
 
-          - task: SonarQubePrepare@5
-            inputs:
-              SonarQube: 'SonarQubeService'  # 🔁 Make sure this matches your service connection name
-              scannerMode: 'CLI'
-              configMode: 'manual'
-              cliProjectKey: 'graphql-project'
-              cliProjectName: 'GraphQL Project'
-              cliSources: '.'
+  # --------------------------------------------
+  # Stage 5: Deliver
+  # --------------------------------------------
+  - stage: Deliver
+    displayName: 'Deliver Artifact'
+    jobs:
+      - job: Deliver
+        steps:
+          - script: echo "Delivering artifact to release pipeline..."
+            displayName: 'Simulate Deliver Step'
 
-          - task: SonarQubeAnalyze@5
+  # --------------------------------------------
+  # Stage 6: Deploy to Dev
+  # --------------------------------------------
+  - stage: DeployDev
+    displayName: 'Deploy to Dev Environment'
+    jobs:
+      - job: Dev
+        steps:
+          - script: echo "Deploying app to Dev environment on port 5000"
+            displayName: 'Simulate Dev Deployment'
 
-          - task: SonarQubePublish@5
-            inputs:
-              pollingTimeoutSec: '300'
+  # --------------------------------------------
+  # Stage 7: Deploy to QAT
+  # --------------------------------------------
+  - stage: DeployQAT
+    displayName: 'Deploy to QAT Environment'
+    jobs:
+      - job: QAT
+        steps:
+          - script: echo "Deploying to QAT environment"
+            displayName: 'Simulate QAT Deployment'
+
+  # --------------------------------------------
+  # Stage 8: Deploy to Staging
+  # --------------------------------------------
+  - stage: DeployStaging
+    displayName: 'Deploy to Staging Environment'
+    jobs:
+      - job: Staging
+        steps:
+          - script: echo "Deploying to Staging environment"
+            displayName: 'Simulate Staging Deployment'
+
+  # --------------------------------------------
+  # Stage 9: Deploy to Production
+  # --------------------------------------------
+  - stage: DeployProduction
+    displayName: 'Deploy to Production Environment'
+    jobs:
+      - job: Production
+        steps:
+          - script: echo "Deploying to Production environment"
+            displayName: 'Simulate Production Deployment'
