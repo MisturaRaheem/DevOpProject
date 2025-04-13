@@ -81,7 +81,7 @@ stages:
         - script: |
             echo " Running mock unit tests"
             echo "Mock test: All tests passed!" > test.txt
-            cat test.txt
+            type test.txt
           workingDirectory: graphql-server
           displayName: 'Mock unit test with coverage output'
 
