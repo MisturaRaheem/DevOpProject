@@ -5,149 +5,149 @@ pool:
   name: COMP367
 
 stages:
-  # --------------------------------------------
-  # Stage 1: Build Frontend
-  # --------------------------------------------
-  - stage: BuildFrontend
-    displayName: 'Build React Frontend'
-    jobs:
-      - job: BuildReact
-        steps:
-          - checkout: self
+# ------------------------------------------------
+# Stage 1: Build React Frontend
+# ------------------------------------------------
+- stage: BuildFrontend
+  displayName: 'Build React Frontend'
+  jobs:
+    - job: BuildReact
+      steps:
+        - checkout: self
 
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Install Node.js'
+        - task: NodeTool@0
+          inputs:
+            versionSpec: '18.x'
+          displayName: 'Install Node.js'
 
-          - script: |
-              npm install
-            workingDirectory: graphql-client
-            displayName: 'Install frontend dependencies'
+        - script: |
+            npm install
+          workingDirectory: graphql-client
+          displayName: 'Install frontend dependencies'
 
-          - script: |
-              npm run build
-            workingDirectory: graphql-client
-            displayName: 'Run Vite build'
+        - script: |
+            npm run build
+          workingDirectory: graphql-client
+          displayName: 'Build React frontend'
 
-          - task: PublishBuildArtifacts@1
-            inputs:
-              pathToPublish: 'graphql-client/dist'
-              artifactName: 'react-app'
-              publishLocation: 'Container'
-            displayName: 'Publish React Build Artifact'
+        - task: PublishBuildArtifacts@1
+          inputs:
+            pathToPublish: 'graphql-client/dist'
+            artifactName: 'react-app'
+            publishLocation: 'Container'
+          displayName: 'Publish React Artifact'
 
-  # --------------------------------------------
-  # Stage 2: Build Backend
-  # --------------------------------------------
-  - stage: BuildBackend
-    displayName: 'Install Backend Dependencies'
-    jobs:
-      - job: InstallBackend
-        steps:
-          - checkout: self
+# ------------------------------------------------
+# Stage 2: Build Node.js Backend
+# ------------------------------------------------
+- stage: BuildBackend
+  displayName: 'Build Backend'
+  jobs:
+    - job: BuildServer
+      steps:
+        - checkout: self
 
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Install Node.js'
+        - task: NodeTool@0
+          inputs:
+            versionSpec: '18.x'
+          displayName: 'Install Node.js'
 
-          - script: |
-              npm install
-            workingDirectory: graphql-server
-            displayName: 'Install GraphQL Server dependencies'
+        - script: |
+            npm install
+          workingDirectory: graphql-server
+          displayName: 'Install backend dependencies'
 
-          - task: PublishBuildArtifacts@1
-            inputs:
-              pathToPublish: 'graphql-server'
-              artifactName: 'graphql-server'
-              publishLocation: 'Container'
-            displayName: 'Publish GraphQL Server Artifact'
+        - task: PublishBuildArtifacts@1
+          inputs:
+            pathToPublish: 'graphql-server'
+            artifactName: 'graphql-server'
+            publishLocation: 'Container'
+          displayName: 'Publish Backend Artifact'
 
-  # --------------------------------------------
-  # Stage 3: Unit Tests (Mocked)
-  # --------------------------------------------
-  - stage: Test
-    displayName: 'Run Unit Tests and Coverage'
-    jobs:
-      - job: TestCode
-        steps:
-          - checkout: self
+# ------------------------------------------------
+# Stage 3: Unit Testing (Mock)
+# ------------------------------------------------
+- stage: Test
+  displayName: 'Run Unit Tests and Coverage'
+  jobs:
+    - job: TestCode
+      steps:
+        - checkout: self
 
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
+        - task: NodeTool@0
+          inputs:
+            versionSpec: '18.x'
 
-          - script: |
-              echo "✅ Running mock unit tests"
-              echo "All tests passed!" > test.txt
-              cat test.txt
-            workingDirectory: graphql-server
-            displayName: 'Mock unit test with coverage output'
+        - script: |
+            echo "✅ Running mock unit tests"
+            echo "Mock test: All tests passed!" > test.txt
+            cat test.txt
+          workingDirectory: graphql-server
+          displayName: 'Mock unit test with coverage output'
 
-  # --------------------------------------------
-  # Stage 4: Mock SonarQube
-  # --------------------------------------------
-  - stage: SonarQube
-    displayName: 'Code Analysis (Mocked)'
-    condition: succeeded()
-    jobs:
-      - job: MockSonar
-        steps:
-          - script: echo "🛈 Skipping SonarQube analysis — setup pending"
-            displayName: 'Mock SonarQube Step'
+# ------------------------------------------------
+# Stage 4: Code Analysis (Mock SonarQube)
+# ------------------------------------------------
+- stage: SonarQube
+  displayName: 'Code Analysis (Mocked)'
+  condition: succeeded()
+  jobs:
+    - job: Sonar
+      steps:
+        - script: echo "🛈 SonarQube analysis skipped (mock only)"
+          displayName: 'Mock SonarQube Step'
 
-  # --------------------------------------------
-  # Stage 5: Deliver
-  # --------------------------------------------
-  - stage: Deliver
-    displayName: 'Deliver Artifact'
-    jobs:
-      - job: Deliver
-        steps:
-          - script: echo "Delivering artifact to release pipeline..."
-            displayName: 'Simulate Deliver Step'
+# ------------------------------------------------
+# Stage 5: Deliver Artifact
+# ------------------------------------------------
+- stage: Deliver
+  displayName: 'Deliver Artifact'
+  jobs:
+    - job: Deliver
+      steps:
+        - script: echo "Delivering artifacts to release pipeline..."
+          displayName: 'Deliver Step'
 
-  # --------------------------------------------
-  # Stage 6: Deploy to Dev
-  # --------------------------------------------
-  - stage: DeployDev
-    displayName: 'Deploy to Dev Environment'
-    jobs:
-      - job: Dev
-        steps:
-          - script: echo "Deploying app to Dev environment on port 5000"
-            displayName: 'Simulate Dev Deployment'
+# ------------------------------------------------
+# Stage 6: Deploy to Dev
+# ------------------------------------------------
+- stage: DeployDev
+  displayName: 'Deploy to Dev Environment'
+  jobs:
+    - job: Dev
+      steps:
+        - script: echo "✅ Deploying to Dev on port 5000"
+          displayName: 'Dev Deployment Step'
 
-  # --------------------------------------------
-  # Stage 7: Deploy to QAT
-  # --------------------------------------------
-  - stage: DeployQAT
-    displayName: 'Deploy to QAT Environment'
-    jobs:
-      - job: QAT
-        steps:
-          - script: echo "Deploying to QAT environment"
-            displayName: 'Simulate QAT Deployment'
+# ------------------------------------------------
+# Stage 7: Deploy to QAT
+# ------------------------------------------------
+- stage: DeployQAT
+  displayName: 'Deploy to QAT Environment'
+  jobs:
+    - job: QAT
+      steps:
+        - script: echo "✅ Deploying to QAT Environment"
+          displayName: 'QAT Deployment Step'
 
-  # --------------------------------------------
-  # Stage 8: Deploy to Staging
-  # --------------------------------------------
-  - stage: DeployStaging
-    displayName: 'Deploy to Staging Environment'
-    jobs:
-      - job: Staging
-        steps:
-          - script: echo "Deploying to Staging environment"
-            displayName: 'Simulate Staging Deployment'
+# ------------------------------------------------
+# Stage 8: Deploy to Staging
+# ------------------------------------------------
+- stage: DeployStaging
+  displayName: 'Deploy to Staging Environment'
+  jobs:
+    - job: Staging
+      steps:
+        - script: echo "✅ Deploying to Staging Environment"
+          displayName: 'Staging Deployment Step'
 
-  # --------------------------------------------
-  # Stage 9: Deploy to Production
-  # --------------------------------------------
-  - stage: DeployProduction
-    displayName: 'Deploy to Production Environment'
-    jobs:
-      - job: Production
-        steps:
-          - script: echo "Deploying to Production environment"
-            displayName: 'Simulate Production Deployment'
+# ------------------------------------------------
+# Stage 9: Deploy to Production
+# ------------------------------------------------
+- stage: DeployProduction
+  displayName: 'Deploy to Production Environment'
+  jobs:
+    - job: Production
+      steps:
+        - script: echo "✅ Deploying to Production Environment"
+          displayName: 'Production Deployment Step'
