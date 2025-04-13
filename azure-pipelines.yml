@@ -116,7 +116,7 @@ stages:
   jobs:
     - job: Dev
       steps:
-        - script: echo " Deploying to Dev on port 5000"
+        - script: echo " Deploying to Dev on port 5173"
           displayName: 'Dev Deployment Step'
 
 # ------------------------------------------------
